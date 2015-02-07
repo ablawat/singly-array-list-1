@@ -81,6 +81,24 @@ int32_t linked_array_int_add(linked_array_int_t *list, int64_t new_value)
     return result;
 }
 
+void linked_array_int_clear(linked_array_int_t *list)
+{
+    linked_array_int_node_t *list_node = list -> node_head;
+    linked_array_int_node_t *node_to_remove;
+    
+    while (list_node != NULL)
+    {
+        node_to_remove = list_node;
+        list_node = list_node -> next;
+        free(node_to_remove);
+    }
+    
+    list -> values_num = 0;
+    
+    list -> node_head = NULL;
+    list -> node_tail = NULL;
+}
+
 void linked_array_int_print(linked_array_int_t *list)
 {
     linked_array_int_node_t *list_node = list -> node_head;
@@ -108,4 +126,19 @@ void linked_array_int_print(linked_array_int_t *list)
     }
     
     printf("\n");
+}
+
+void linked_array_int_destroy(linked_array_int_t *list)
+{
+    linked_array_int_node_t *list_node = list -> node_head;
+    linked_array_int_node_t *node_to_remove;
+    
+    free(list);
+    
+    while (list_node != NULL)
+    {
+        node_to_remove = list_node;
+        list_node = list_node -> next;
+        free(node_to_remove);
+    }
 }
