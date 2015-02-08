@@ -9,9 +9,8 @@ linked_array_int_t * linked_array_int_create()
     if (new_list != NULL)
     {
         new_list -> values_num = 0;
-        
-        new_list -> node_head = NULL;
-        new_list -> node_tail = NULL;
+        new_list -> node_head  = NULL;
+        new_list -> node_tail  = NULL;
     }
     
     return new_list;
@@ -19,23 +18,35 @@ linked_array_int_t * linked_array_int_create()
 
 int32_t linked_array_int_add(linked_array_int_t *list, int64_t new_value)
 {
+    linked_array_int_node_t *list_node;
+    
+    int64_t list_values_num;
     int32_t result;
     
-    if (list -> values_num == 0)
+    list_values_num = list -> values_num;
+    
+    if (list_values_num % NODE_VALUES_NUM == 0)
     {
-        linked_array_int_node_t *new_node = malloc(sizeof(linked_array_int_node_t));
+        list_node = malloc(sizeof(linked_array_int_node_t));
         
-        if (new_node != NULL)
+        if (list_node != NULL)
         {
-            new_node -> values[0]  = new_value;
-            new_node -> values_num = 1;
+            list_node -> values[0]  = new_value;
+            list_node -> values_num = 1;
+            list_node -> next       = NULL;
             
-            new_node -> next = NULL;
+            if (list_values_num == 0)
+            {
+                list -> node_head  = list_node;
+                list -> node_tail  = list_node;
+            }
+            else
+            {
+                list -> node_tail -> next = list_node;
+                list -> node_tail = list_node;
+            }
             
-            list -> values_num = 1;
-            
-            list -> node_head = new_node;
-            list -> node_tail = new_node;
+            list -> values_num += 1;
             
             result = 0;
         }
@@ -46,36 +57,14 @@ int32_t linked_array_int_add(linked_array_int_t *list, int64_t new_value)
     }
     else
     {
-        if (list -> node_tail -> values_num < NODE_VALUES_NUM)
-        {
-            linked_array_int_node_t *list_node = list -> node_tail;
-            
-            list_node -> values[list_node -> values_num] = new_value;
-            list_node -> values_num += 1;
-            
-            result = 0;
-        }
-        else
-        {
-            linked_array_int_node_t *new_node = malloc(sizeof(linked_array_int_node_t));
-            
-            if (new_node != NULL)
-            {
-                new_node -> values[0]  = new_value;
-                new_node -> values_num = 1;
-                
-                new_node -> next = NULL;
-                
-                list -> node_tail -> next = new_node;
-                list -> node_tail = new_node;
-                
-                result = 0;
-            }
-            else
-            {
-                result = -1;
-            }
-        }
+        list_node = list -> node_tail;
+        
+        list_node -> values[list_node -> values_num] = new_value;
+        list_node -> values_num += 1;
+        
+        list -> values_num += 1;
+        
+        result = 0;
     }
     
     return result;
@@ -94,9 +83,8 @@ void linked_array_int_clear(linked_array_int_t *list)
     }
     
     list -> values_num = 0;
-    
-    list -> node_head = NULL;
-    list -> node_tail = NULL;
+    list -> node_head  = NULL;
+    list -> node_tail  = NULL;
 }
 
 void linked_array_int_print(linked_array_int_t *list)
